@@ -1,0 +1,5 @@
+site_name: CLDFrel
+theme: material
+plugins:
+- search
+- mkdocstrings
