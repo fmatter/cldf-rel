@@ -1,4 +1,5 @@
 import logging
+import pathlib
 
 from pycldf import Dataset
 
@@ -6,7 +7,7 @@ log = logging.getLogger(__name__)
 
 __author__ = "Florian Matter"
 __email__ = "flmt@mailbox.org"
-__version__ = "0.0.1.dev"
+__version__ = "0.0.1-dev"
 
 
 def table_label(table):
@@ -29,20 +30,16 @@ class Record:
         if target in self.backrefs:
             backrefs = []
             col, tcol = self.backrefs[target]
-            for rec in self.dataset[target].entries.values():
+            for rec in self.dataset[target].records.values():
                 if rec[tcol] == self[col]:
                     backrefs.append(rec)
             return backrefs
         if target in self.assocs:
             col = self.assocs[target]
             table, tcol = self.foreignkeys[self.assocs[target]]
-            for rec in self.dataset[table].entries.values():
+            for rec in self.dataset[table].records.values():
                 if rec[tcol] == self[col]:
                     return rec
-            # log.warning(f"No {table} {self[col]} found.")
-            return None
-        # if hasattr(self.orm, target):
-        #     return getattr(self.orm, target)
         raise AttributeError
 
     @property
@@ -66,22 +63,12 @@ class Record:
     def get(self, val, optional_value=None):
         return self.fields.get(val, optional_value)
 
-    def __iter__(self):
-        return self.fields.items()
-
     def __repr__(self):
         return (
             f"{self.table.label}: ["
             + ",".join([f"{k}: {v}" for k, v in self.fields.items()])
             + "]"
         )
-
-    @property
-    def refs(self):
-        out = {}
-        for key in list(self.assocs) + list(self.backrefs):
-            out[key] = getattr(self, key)
-        return out
 
     @property
     def single_refs(self):
@@ -102,7 +89,7 @@ class Record:
 
 
 class Table:
-    entries: dict
+    records: dict
     label: str
     name: str
 
@@ -113,10 +100,10 @@ class Table:
                 orm_entities[rec.id] = rec
         self.dataset = dataset
         self.label = label
-        self.entries = {}
+        self.records = {}
         self.name = name
         for rec in records:
-            self.entries[rec["ID"]] = Record(
+            self.records[rec["ID"]] = Record(
                 rec, self, dataset, orm=orm_entities.get(rec.get("ID"))
             )
 
@@ -129,7 +116,7 @@ class Table:
         return self.dataset.foreignkeys.get(self.label, {})
 
     def __getitem__(self, item):
-        return self.entries[item]
+        return self.records[item]
 
 
 class CLDFDataset:
@@ -144,10 +131,10 @@ class CLDFDataset:
         self.foreignkeys = {}
         self.backrefs = {}
         self.orm = orm
-        if isinstance(metadata, str):
-            self.dataset = Dataset.from_metadata(metadata)
-        elif isinstance(metadata, Dataset):
+        if isinstance(metadata, Dataset):
             self.dataset = metadata
+        elif isinstance(metadata, str) or isinstance(metadata, pathlib.Path):
+            self.dataset = Dataset.from_metadata(metadata)
         else:
             raise ValueError(metadata)
         for table in self.dataset.tables:
