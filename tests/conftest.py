@@ -8,11 +8,11 @@ def data():
     return pathlib.Path(__file__).parent / "data"
 
 
-
 @pytest.fixture
 def dataset1(data):
-    return Dataset.from_metadata(data/"cldf/metadata.json")
+    return Dataset.from_metadata(data / "cldf/metadata.json")
+
 
 @pytest.fixture
 def metadata(data):
-    return data/"cldf/metadata.json"
+    return data / "cldf/metadata.json"
