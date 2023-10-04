@@ -116,6 +116,7 @@ class Table:
 
     @property
     def backrefs(self):
+        """Returns all backrefs for this table."""
         return self.dataset.backrefs.get(self.label, {})
 
     @property
