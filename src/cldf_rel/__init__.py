@@ -89,9 +89,16 @@ class Record:
 
 
 class Table:
-    records: dict
-    label: str
-    name: str
+    """A table holding entities of a specific kind, e.g. languages or morphemes.
+
+    Args:
+        records (list): List of table records (dicts)
+        label (str): Human-readable label of the table (languages, morphemes).
+        name (str): LanguageTable, morphemes.csv.
+        dataset (CLDFDataset): The dataset to which the table belongs.
+        orm_records (list, optional): If the table is implemented in the [pycldf ORM module](https://github.com/cldf/pycldf/blob/master/src/pycldf/orm.py),
+            dataset.objects("<TableName") can be passed.
+    """
 
     def __init__(self, records, label, name, dataset, orm_records=None):
         orm_entities = {}

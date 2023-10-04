@@ -1,4 +1,4 @@
-site_name: CLDFrel
+site_name: cldf-rel
 theme: material
 plugins:
 - search

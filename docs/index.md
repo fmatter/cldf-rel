@@ -1,4 +1,4 @@
-# CLDFrels
+# cldf-rel
 
 
 ::: cldf_rel
