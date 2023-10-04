@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cldf_rel"
-version = "0.0.1"
+version = "0.0.1.dev"
 description = "Easily access related objects in CLDF datasets"
 authors = ["Florian Matter <flmt@mailbox.org>"]
 license = "Apache-2.0"
