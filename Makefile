@@ -19,6 +19,10 @@ coverage:
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
+pypi:
+	poetry publish --build
+	rm -r dist
+
 release:
 	bump2version release --commit --tag
 	git push; git push --tags
