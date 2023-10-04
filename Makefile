@@ -20,7 +20,7 @@ coverage:
 	$(BROWSER) htmlcov/index.html
 
 release:
-	bump2version release
+	bump2version release --commit --tag
 	git push; git push --tags
 	make pypi
 	bump2version patch
