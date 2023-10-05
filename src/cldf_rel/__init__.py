@@ -37,10 +37,23 @@ class Record:
         if target in self.assocs:
             col = self.assocs[target]
             table, tcol = self.foreignkeys[self.assocs[target]]
+            if not self[col]:
+                return None
+            if isinstance(self[col], list):
+                target = self[col]
+                res = []
+            else:
+                target = [self[col]]
+                res = None
             for rec in self.dataset[table].records.values():
-                if rec[tcol] == self[col]:
-                    return rec
-        raise AttributeError
+                if rec[tcol] in target:
+                    if res is None:
+                        return rec
+                    else:
+                        res.append(rec)
+            if res:
+                return res
+        raise AttributeError(target)
 
     @property
     def backrefs(self):
@@ -74,12 +87,19 @@ class Record:
     def single_refs(self):
         out = {}
         for key in self.assocs:
-            out[key] = getattr(self, key)
+            res = getattr(self, key)
+            if not isinstance(res, list):
+                out[key] = res
         return out
 
     @property
     def multi_refs(self):
         out = {}
+        for key in self.assocs:
+            res = getattr(self, key)
+            if isinstance(res, list):
+                out.setdefault(key+"s", [])
+                out[key+"s"].append(res)
         for key in self.backrefs:
             out[key] = getattr(self, key)
         return out
@@ -127,6 +147,11 @@ class Table:
         return self.records[item]
 
 
+def get_table_name(table):
+    if table.asdict().get("dc:conformsTo", "").endswith("Table"):
+        return table.asdict()["dc:conformsTo"].split("#")[-1]
+    return str(table.url)
+
 class CLDFDataset:
     tables: dict = {}
     foreignkeys: dict = {}
@@ -162,12 +187,10 @@ class CLDFDataset:
 
         for table in self.dataset.tables:
             orm_records = None
-            if table.asdict().get("dc:conformsTo", "").endswith("Table"):
-                name = table.asdict()["dc:conformsTo"].split("#")[-1]
+            name = get_table_name(table)
+            if name.endswith("Table"):
                 if self.orm:
                     orm_records = self.dataset.objects(name)
-            else:
-                name = str(table.url)
             label = table_label(table)
             self.tables[label] = Table(
                 records=self.dataset.iter_rows(table),

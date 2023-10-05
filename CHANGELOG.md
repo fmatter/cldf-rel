@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+* `get_table_name`
+
+### Fixed
+* bug with empty many-to-one references
+
 ## [0.0.2] - 2023-10-03
 
 ### Added
