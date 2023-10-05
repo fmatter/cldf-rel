@@ -98,8 +98,7 @@ class Record:
         for key in self.assocs:
             res = getattr(self, key)
             if isinstance(res, list):
-                out.setdefault(key+"s", [])
-                out[key+"s"].append(res)
+                out[key+"s"] = res
         for key in self.backrefs:
             out[key] = getattr(self, key)
         return out
