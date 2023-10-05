@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 __author__ = "Florian Matter"
 __email__ = "flmt@mailbox.org"
-__version__ = "0.0.3.dev"
+__version__ = "0.0.3"
 
 
 def table_label(table):
