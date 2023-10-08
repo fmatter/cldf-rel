@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * a many-to-many bug
+* not all CLDF components support ORM
 
 ## [0.0.3] - 2023-10-04
 

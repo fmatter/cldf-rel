@@ -189,7 +189,10 @@ class CLDFDataset:
             name = get_table_name(table)
             if name.endswith("Table"):
                 if self.orm:
-                    orm_records = self.dataset.objects(name)
+                    try:
+                        orm_records = self.dataset.objects(name)
+                    except KeyError:
+                        pass
             label = table_label(table)
             self.tables[label] = Table(
                 records=self.dataset.iter_rows(table),
