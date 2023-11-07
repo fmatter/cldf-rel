@@ -1,5 +1,0 @@
-site_name: cldf-rel
-theme: material
-plugins:
-- search
-- mkdocstrings
