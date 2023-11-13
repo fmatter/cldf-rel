@@ -2,7 +2,6 @@
 name = "cldf-rel"
 version = "0.1.0.dev"
 license = "MIT"
-homepage = ""
 repository = "https://github.com/fmatter/cldf-rel"
 readme = "README.md"
 description = "Load a CLDF dataset w/ foreign keys and backrefs"

@@ -22,6 +22,7 @@ class Record:
         self.fields = dic
         self.table = table
         self.label = table.label
+        self.cache = {}
         if orm:
             self.cldf = orm.cldf
             self.related = orm.related
@@ -65,10 +66,12 @@ class Record:
 
     @property
     def assocs(self):
-        out = {}
-        for field in self.dataset.foreignkeys.get(self.label, {}).keys():
-            out[field.replace("_ID", "").lower()] = field
-        return out
+        if "assocs" not in self.cache:
+            out = {}
+            for field in self.dataset.foreignkeys.get(self.label, {}).keys():
+                out[field.replace("_ID", "").lower()] = field
+            self.cache["assocs"] = out
+        return self.cache["assocs"]
 
     def items(self):
         return self.fields.items()
@@ -85,23 +88,27 @@ class Record:
 
     @property
     def single_refs(self):
-        out = {}
-        for key in self.assocs:
-            res = getattr(self, key)
-            if not isinstance(res, list):
-                out[key] = res
-        return out
+        if "singles" not in self.cache:
+            out = {}
+            for key in self.assocs:
+                res = getattr(self, key)
+                if not isinstance(res, list):
+                    out[key] = res
+            self.cache["singles"] = out
+        return self.cache["singles"]
 
     @property
     def multi_refs(self):
-        out = {}
-        for key in self.assocs:
-            res = getattr(self, key)
-            if isinstance(res, list):
-                out[key+"s"] = res
-        for key in self.backrefs:
-            out[key] = getattr(self, key)
-        return out
+        if "multis" not in self.cache:
+            out = {}
+            for key in self.assocs:
+                res = getattr(self, key)
+                if isinstance(res, list):
+                    out[key+"s"] = res
+            for key in self.backrefs:
+                out[key] = getattr(self, key)
+            self.cache["multis"] = out
+        return self.cache["multis"]
 
     def __getitem__(self, item):
         return self.fields[item]
