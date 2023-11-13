@@ -22,37 +22,43 @@ class Record:
         self.fields = dic
         self.table = table
         self.label = table.label
-        self.cache = {}
+        self.cache = {"attr": {}}
         if orm:
             self.cldf = orm.cldf
             self.related = orm.related
 
     def __getattr__(self, target):
+        if target in self.cache["attr"]:
+            return self.cache["attr"][target]
         if target in self.backrefs:
             backrefs = []
             col, tcol = self.backrefs[target]
             for rec in self.dataset[target].records.values():
                 if rec[tcol] == self[col]:
                     backrefs.append(rec)
+            self.cache["attr"][target] = backrefs
             return backrefs
         if target in self.assocs:
             col = self.assocs[target]
             table, tcol = self.foreignkeys[self.assocs[target]]
             if not self[col]:
+                self.cache["attr"][target] = None
                 return None
             if isinstance(self[col], list):
-                target = self[col]
+                ntarget = self[col]
                 res = []
             else:
-                target = [self[col]]
+                ntarget = [self[col]]
                 res = None
             for rec in self.dataset[table].records.values():
-                if rec[tcol] in target:
+                if rec[tcol] in ntarget:
                     if res is None:
+                        self.cache["attr"][target] = rec
                         return rec
                     else:
                         res.append(rec)
             if res:
+                self.cache["attr"][target] = res
                 return res
         raise AttributeError(target)
 
