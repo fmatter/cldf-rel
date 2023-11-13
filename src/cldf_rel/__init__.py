@@ -110,7 +110,7 @@ class Record:
             for key in self.assocs:
                 res = getattr(self, key)
                 if isinstance(res, list):
-                    out[key+"s"] = res
+                    out[key + "s"] = res
             for key in self.backrefs:
                 out[key] = getattr(self, key)
             self.cache["multis"] = out
@@ -163,6 +163,7 @@ def get_table_name(table):
     if table.asdict().get("dc:conformsTo", "").endswith("Table"):
         return table.asdict()["dc:conformsTo"].split("#")[-1]
     return str(table.url)
+
 
 class CLDFDataset:
     tables: dict = {}
