@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cldf-rel"
-version = "0.1.0"
+version = "0.1.0.dev"
 license = "MIT"
 repository = "https://github.com/fmatter/cldf-rel"
 readme = "README.md"
